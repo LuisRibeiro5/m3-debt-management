@@ -3,25 +3,29 @@ Sobre o Projeto
 Este repositório contém o backend (Express + PostgreSQL) e o frontend (Vue + Vite) usados no projeto da disciplina de Programação Web.
 A aplicação permite rodar API e interface gráfica separadamente, mas dentro do mesmo repositório para facilitar o entendimento da estrutura.
 
-📁 Estrutura do Projeto
+## 📂 Estrutura do Projeto **M3_PROGWEB**
+
+```
 M3_PROGWEB/
 │
 ├── backend/
 │   ├── src/
 │   │   ├── controllers/
 │   │   ├── routes/
-│   │   ├── db.js
-│   │   └── server.js
+│   │   └── db.js
+│   │
+│   ├── server.js
 │   ├── sql/
 │   ├── package.json
-│   └── .env
+│   └── .env  (opcional)
 │
-└── frontend/
-    ├── src/
-    ├── public/
-    ├── package.json
-    └── .env (opcional)
-
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+└── .env (opcional)
+```
 🚀 Como rodar o Backend (Node + Express)
 ✔ 1. Entre na pasta do backend:
 cd backend
