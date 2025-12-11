@@ -12,18 +12,51 @@ const getAllDividas = async (req, res) => {
 
 const createDivida = async (req, res) => {  
     try {
-        const {nome, cpf, email, cep, numero, complemento, 
-            valor, descricao, situacao, processo} = req.body;
+        const {nome_cliente, cpf_cliente, email_cliente, cep, numero, complemento, 
+            valor, descricao, situacao, numero_processo} = req.body;
 
         const comprovante = req.file ? req.file.buffer : null;
 
-        const sql = `INSERT INTO dividas (nome_cliente,cpf_cliente,email_cliente,cep,
-        numero,complemento,valor,descricao,situacao,numero_processo,comprovante) values
-        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *;`;
+        if (!nome_cliente || !cpf_cliente || !email_cliente || !valor || !descricao || !situacao) {
+            return res.status(400).json({
+                error: "Campos obrigatórios não preenchidos."
+            });
+        }
 
-        const values = [nome, cpf, email, cep, numero, complemento, 
-        valor, descricao, situacao, processo, comprovante];
+        // CPF precisa ter 11 dígitos
+        if (!/^\d{11}$/.test(cpf_cliente)) {
+            return res.status(400).json({ error: "CPF inválido." });
+        }
 
+        // E-mail básico
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email_cliente)) {
+            return res.status(400).json({ error: "E-mail inválido." });
+        }
+
+        // Valor deve ser número positivo
+        if (isNaN(valor) || Number(valor) <= 0) {
+            return res.status(400).json({ error: "Valor inválido." });
+        }
+
+        // Situação só pode ser "pendente" ou "pago"
+        const situacoesValidas = ["pendente", "pago"];
+        if (!situacoesValidas.includes(situacao)) {
+            return res.status(400).json({ error: "Situação inválida." });
+        }
+
+
+        const sql = `
+            INSERT INTO dividas (
+                nome_cliente, cpf_cliente, email_cliente, cep,
+                numero, complemento, valor, descricao, situacao,
+                numero_processo, comprovante
+            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+            RETURNING *;
+        `;
+
+        const values = [nome_cliente, cpf_cliente, email_cliente, cep, numero, complemento, 
+            valor, descricao, situacao, numero_processo, comprovante];
         const result =  await db.query(sql, values);
         
         res.status(201).json(result.rows[0]);
